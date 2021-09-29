@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "babel-node index.js"
+    "start": "babel-node index.js",
+    "fake": "babel-node generate.js"
   },
   "keywords": [],
   "author": "Grzegorz Kupczyk",
@@ -13,5 +14,8 @@
     "@babel/core": "^7.15.5",
     "@babel/node": "^7.15.4",
     "@babel/preset-env": "^7.15.6"
+  },
+  "devDependencies": {
+    "faker": "^5.5.3"
   }
 }
