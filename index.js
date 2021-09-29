@@ -1,9 +1,12 @@
-import { readFile, readdir } from 'fs/promises';
+import { readFile, writeFile, readdir } from 'fs/promises';
 import { join, resolve } from 'path';
+const { EOL } = require('os');
 
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import moment from 'moment';
+
+import markdown from './markdown';
 
 const argv = yargs(hideBin(process.argv))
   .option('input_directory', {
@@ -38,7 +41,7 @@ async function readObjects(path) {
 function sortObjects(objects) {
   return objects.reduce((acc, obj) => {
     const time = moment(obj.date_journal);
-    const key = time.format("DD.MM.YYYY");
+    const key = time.format("YYYY-MM-DD");
 
     if (!acc[key]) {
       acc[key] = [];
@@ -46,6 +49,28 @@ function sortObjects(objects) {
     acc[key].push(obj);
     return acc;
   }, {});
+}
+
+function renderFiles(outputDirectory, objects) {
+  let promises = [];
+  Object.keys(objects).forEach(date => {
+    const filename = `${date}.md`;
+    const outputPath = join(outputDirectory, filename);
+    let content = "";
+    objects[date].forEach((obj, i) => {
+      content += i != 0 ? EOL : '';
+      content += markdown(obj);
+    });
+
+    const prom = writeFile(outputPath, content, 'utf8')
+      .then(() => {
+        console.log(`Saved ${outputPath}`);
+      });
+
+    promises.push(prom);
+  });
+
+  return Promise.all(promises);
 }
 
 async function main() {
@@ -57,6 +82,8 @@ async function main() {
 
   let objects = await readObjects(input);
   objects = sortObjects(objects);
+
+  await renderFiles(output, objects);
 }
 
 main();
