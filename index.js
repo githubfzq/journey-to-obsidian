@@ -1,7 +1,9 @@
+import { readFile, readdir } from 'fs/promises';
+import { join, resolve } from 'path';
+
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
-import { join, resolve } from 'path';
-import { readFile, readdir } from 'fs/promises';
+import moment from 'moment';
 
 const argv = yargs(hideBin(process.argv))
   .option('input_directory', {
@@ -25,12 +27,25 @@ async function readJson(path) {
   return JSON.parse(content);
 }
 
-async function readFiles(path) {
+async function readObjects(path) {
   const fileNames = await readdir(path);
 
   return asyncParallelForEach(fileNames,
     async fileName => readJson(join(path, fileName))
   );
+}
+
+function sortObjects(objects) {
+  return objects.reduce((acc, obj) => {
+    const time = moment(obj.date_journal);
+    const key = time.format("DD.MM.YYYY");
+
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(obj);
+    return acc;
+  }, {});
 }
 
 async function main() {
@@ -40,7 +55,8 @@ async function main() {
   console.log(`Read from ${input}`);
   console.log(`Save to ${output}`);
 
-  console.dir(await readFiles(input));
+  let objects = await readObjects(input);
+  objects = sortObjects(objects);
 }
 
 main();
