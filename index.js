@@ -39,7 +39,8 @@ async function readObjects(path) {
 }
 
 function sortObjects(objects) {
-  return objects.reduce((acc, obj) => {
+  // group by date
+  objects = objects.reduce((acc, obj) => {
     const time = moment(obj.date_journal);
     const key = time.format("YYYY-MM-DD");
 
@@ -49,6 +50,15 @@ function sortObjects(objects) {
     acc[key].push(obj);
     return acc;
   }, {});
+
+  //sort by time
+  for (const key in objects) {
+    objects[key] = objects[key].sort((a, b) =>
+      a.date_journal - b.date_journal
+    );
+  }
+
+  return objects;
 }
 
 function renderFiles(outputDirectory, objects) {
