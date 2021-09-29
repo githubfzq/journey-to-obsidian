@@ -31,7 +31,10 @@ async function readJson(path) {
 }
 
 async function readObjects(path) {
-  const fileNames = await readdir(path);
+  let fileNames = await readdir(path);
+
+  fileNames = fileNames.filter(fileName =>
+    fileName.toLowerCase().endsWith(".json"));
 
   return asyncParallelForEach(fileNames,
     async fileName => readJson(join(path, fileName))
