@@ -7,10 +7,16 @@ function parseHtml(object) {
   const document = cheerio.load(object.text);
   let output = "";
 
-  document('p').map((_, e) => {
-    const p = cheerio(e).text();
-    output += p.trim() + EOL + EOL;
-  });
+  const paragraphs = document('p');
+
+  if (paragraphs.length > 0) {
+    paragraphs.map((_, e) => {
+      const p = cheerio(e).text();
+      output += p.trim() + EOL + EOL;
+    });
+  } else {
+    output += object.text.trim() + EOL + EOL;
+  }
 
   return output;
 }
