@@ -1,7 +1,7 @@
 {
-  "name": "some-processing",
+  "name": "journey-to-obsidian",
   "version": "1.0.0",
-  "description": "",
+  "description": "The app converts `.json` files exported from Journey to markown files, that can be read by Obsidian",
   "scripts": {
     "start": "babel-node -- index.js",
     "fake": "babel-node generate.js"
