@@ -67,7 +67,7 @@ function sortObjects(objects) {
 function renderFiles(outputDirectory, objects) {
   let promises = [];
   Object.keys(objects).forEach(date => {
-    const filename = `${date}.md`;
+    const filename = `日记 - ${date}.md`;
     const outputPath = join(outputDirectory, filename);
     let content = "";
     objects[date].forEach((obj, i) => {
